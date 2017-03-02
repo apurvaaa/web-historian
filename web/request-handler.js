@@ -10,10 +10,10 @@ exports.handleRequest = function (req, res) {
     console.log('inside if');
     res.statusCode = 200;
     displayHelper.serveAssets(res, path.join(__dirname, 'public/index.html'));
-    // res.end('<input />');
   } else {
-    res.end(archive.paths.list);
     
+    res.end(archive.paths.list);
+        
   }
   
 };
