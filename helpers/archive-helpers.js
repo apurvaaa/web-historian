@@ -25,9 +25,10 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
+//reads URL from .txt file
 exports.readListOfUrls = function(callback) {
-  var lines = [];
   var stream = fs.createReadStream(this.paths.list, {'encoding': 'utf-8'});
+  var lines = [];
   var fileData = '';
 
   stream.on('data', function (data) {
@@ -37,35 +38,38 @@ exports.readListOfUrls = function(callback) {
 
   stream.on('end', function () {
     console.log('ending stream');
-    callback(lines);
+    return callback(lines);
   });
 };
 
+//checks .txt for URL 
 exports.isUrlInList = function(url, callback) {
   this.readListOfUrls(function (urlArr) {
     var isInside = urlArr.indexOf(url);
-    callback(isInside >= 0);
+    return callback(isInside >= 0);
   });
 };
 
+//adds URL to .txt
 exports.addUrlToList = function(url, callback) {
   var stream = fs.createWriteStream(this.paths.list, {encoding: 'utf-8', flags: 'a'});
   stream.write(url + '\n');
   stream.end();
-  callback();
+  return callback();
 };
 
+//checks archive dir for file with name URL
 exports.isUrlArchived = function(url, callback) {
   fs.readdir(this.paths.archivedSites, function (err, fileArr) {
     var isPresent = false;
     fileArr.forEach(file => {
       if (file === url) {
-        callback(true);
         isPresent = true;
+        return callback(true);
       }
     });
     if (!isPresent) {
-      callback(false);
+      return callback(false);
     }
   });
 };
