@@ -30,24 +30,43 @@ var actions = {
   },
   'POST': function(req, res) {
 
-    var ourUrl = urlParse.parse(req.url);
-    ourUrl = ourUrl.split('=')[1];
-    displayHelper.sendRedirect(res, archive.paths.archivedSites + ourUrl);
+    // displayHelper.sendRedirect(res, archive.paths.archivedSites + ourUrl);
+
     //call collectData to get data in the post body
+    var ourUrl = urlParse.parse(req.url).pathname;
+    displayHelper.collectData(req, function (data) {
       //split string with '=' as delimiter, use last element
       //replace http:// with empty string
+      console.log('data', data);
+      ourUrl = data.split('=')[1].replace('http://', '');
 
+      console.log('OUR URL', ourUrl);
     //check if urlIsInList 
-      //if true
+      archive.isUrlInList(ourUrl, function (isInList) {
+        if (isInList) { //if true
         //check if url is in archives
+          archive.isUrlArchived(ourUrl, function (isInArchive) {
           //if true
+            if (isInArchive) {
             //redirect to cached page
-          //if NOT in archives
+              displayHelper.sendRedirect(res, ourUrl);
+            } else { //if NOT in archives
             //redirect to loading page
-      //if false 
-         // add url to list
-         //redirect to loading page
+              displayerHelper.sendRedirect(res, '/loading.html');
+            }
+          });
+        } else { //if false 
+          // add url to list
+          archive.addUrlToList(ourUrl, function () {
+            //redirect to loading page
+            displayHelper.sendRedirect(res, '/loading.html');  
+          });
+          
+        }
+        
+      });
 
+    });
 
   }
 };

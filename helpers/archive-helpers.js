@@ -38,7 +38,7 @@ exports.readListOfUrls = function(callback) {
 
   stream.on('end', function () {
     console.log('ending stream');
-    return callback(lines);
+    callback(lines);
   });
 };
 
@@ -46,7 +46,7 @@ exports.readListOfUrls = function(callback) {
 exports.isUrlInList = function(url, callback) {
   this.readListOfUrls(function (urlArr) {
     var isInside = urlArr.indexOf(url);
-    return callback(isInside >= 0);
+    callback(isInside >= 0);
   });
 };
 
@@ -55,7 +55,7 @@ exports.addUrlToList = function(url, callback) {
   var stream = fs.createWriteStream(this.paths.list, {encoding: 'utf-8', flags: 'a'});
   stream.write(url + '\n');
   stream.end();
-  return callback();
+  callback();
 };
 
 //checks archive dir for file with name URL
@@ -65,11 +65,11 @@ exports.isUrlArchived = function(url, callback) {
     fileArr.forEach(file => {
       if (file === url) {
         isPresent = true;
-        return callback(true);
+        callback(true);
       }
     });
     if (!isPresent) {
-      return callback(false);
+      callback(false);
     }
   });
 };
